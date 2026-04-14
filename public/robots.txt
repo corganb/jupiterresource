@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jupiterresource.net/sitemap.xml
