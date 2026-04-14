@@ -98,6 +98,13 @@
   .sidebar-left .info-row { padding: 4px 0; display: flex; justify-content: space-between; color: var(--t3); border-bottom: 1px dashed rgba(255,255,255,0.04); }
   .sidebar-left .info-row span:last-child { color: var(--t2); }
   .sidebar-left .coming-soon { margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border: 1px dashed var(--b1); border-radius: 6px; font-size: 10.5px; color: var(--t3); }
+  .ly-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.04); cursor: pointer; }
+  .ly-item:hover { background: rgba(255,255,255,0.02); }
+  .ly-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--b2); flex-shrink: 0; margin-top: 2px; background: transparent; cursor: pointer; }
+  .ly-check.on { background: var(--accent); border-color: var(--accent); }
+  .ly-body { flex: 1; min-width: 0; }
+  .ly-name { font-size: 11.5px; color: var(--t2); }
+  .ly-desc { font-size: 10px; color: var(--t4); margin-top: 2px; line-height: 1.4; }
   .viewer { flex: 1; position: relative; background: var(--bg); }
   #scene { width: 100%; height: 100%; display: block; }
 
@@ -160,10 +167,8 @@
     <div class="info-row"><span>Sidereal day</span><span>9h 55m</span></div>
     <div class="info-row"><span>Dist. from Sun</span><span>778.5 M km (5.20 AU)</span></div>
 
-    <h3>Roadmap v0.2</h3>
-    <div class="coming-soon">
-      Great Red Spot tracking; Juno atmospheric data; Galilean moon ephemeris; Europa Clipper live flyby; cloud band dynamics.
-    </div>
+    <h3>Layers</h3>
+    <div id="layer-list"></div>
 
     <h3>Resource Systems</h3>
     <div class="info-row"><span>Sibling sites</span><span>13</span></div>
@@ -250,11 +255,10 @@
     { name: 'Callisto', a_km: 1882700, e: 0.0074, period_days: 16.689, color: 0x888078, radius: 0.08 },
   ];
   var moonMeshes = [];
+  var moonOrbitLines = [];
   GALILEAN.forEach(function(m) {
-    // Convert real km to scene units; no compression (real scale)
     m.a = m.a_km / SCENE_UNIT_KM;
     m.period = m.period_days * 86400;
-    // Moon body: small sphere sibling of planet inside tiltGroup (so rings around Jupiter's equator)
     var geo = new THREE.SphereGeometry(m.radius, 24, 16);
     var mat = new THREE.MeshStandardMaterial({ color: m.color, roughness: 0.8 });
     var mesh = new THREE.Mesh(geo, mat);
@@ -262,7 +266,6 @@
     m.mesh = mesh;
     moonMeshes.push(m);
 
-    // Orbit circle (polyline approximation) in tilt group's local XZ plane
     var segments = 128;
     var orbitPoints = [];
     for (var i = 0; i <= segments; i++) {
@@ -272,6 +275,7 @@
     var orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
     var orbitMat = new THREE.LineBasicMaterial({ color: m.color, transparent: true, opacity: 0.35 });
     var orbitLine = new THREE.Line(orbitGeo, orbitMat);
+    moonOrbitLines.push(orbitLine);
     tiltGroup.add(orbitLine);
   });
 
@@ -305,6 +309,7 @@
   var junoMesh = new THREE.Mesh(junoGeo, junoMat);
   tiltGroup.add(junoMesh);
   // Juno's highly elliptical orbit polyline
+  var junoOrbitLine;
   (function junoOrbit() {
     var segs = 256;
     var pts = [];
@@ -315,33 +320,89 @@
       var r = JUNO.a * (1 - JUNO.e * Math.cos(E));
       var x = r * Math.cos(nu);
       var z = r * Math.sin(nu);
-      // Rotate by inclination around X axis
       var y = z * Math.sin(JUNO.i);
       z = z * Math.cos(JUNO.i);
       pts.push(new THREE.Vector3(x, y, z));
     }
     var geo = new THREE.BufferGeometry().setFromPoints(pts);
     var mat = new THREE.LineBasicMaterial({ color: 0x7db3ff, transparent: true, opacity: 0.4 });
-    tiltGroup.add(new THREE.Line(geo, mat));
+    junoOrbitLine = new THREE.Line(geo, mat);
+    tiltGroup.add(junoOrbitLine);
   })();
 
   // ═══ GREAT RED SPOT MARKER ═══
-  // Static small red sphere on the Jupiter surface at approximately 22S, 75W
+  var grsMesh;
   (function grs() {
     var geo = new THREE.SphereGeometry(0.04, 16, 12);
     var mat = new THREE.MeshBasicMaterial({ color: 0xd83a20 });
-    var grsMesh = new THREE.Mesh(geo, mat);
-    // Position in local space: lat -22, lon -75 (Jupiter frame is planet local)
+    grsMesh = new THREE.Mesh(geo, mat);
     var lat = -22 * Math.PI / 180;
     var lon = -75 * Math.PI / 180;
-    var r = 1.52;  // slightly above surface
+    var r = 1.52;
     grsMesh.position.set(
       r * Math.cos(lat) * Math.cos(lon),
       r * Math.sin(lat),
       r * Math.cos(lat) * Math.sin(lon),
     );
-    planet.add(grsMesh);  // child of planet so it rotates with the spin
+    planet.add(grsMesh);
   })();
+
+  // ═══ LAYER TOGGLE SYSTEM ═══
+  var LAYERS = [
+    { id: 'surface', name: 'Cloud Bands',        desc: '8K Cassini/Voyager ISS composite',               visible: true },
+    { id: 'grs',     name: 'Great Red Spot',     desc: '~400-year-old anticyclonic storm, 22S 75W',      visible: true },
+    { id: 'moons',   name: 'Galilean Moons',     desc: 'Io, Europa, Ganymede, Callisto (real Kepler)',   visible: true },
+    { id: 'orbits',  name: 'Moon Orbit Lines',   desc: 'Circular orbit approximations',                  visible: true },
+    { id: 'juno',    name: 'Juno Spacecraft',    desc: '53-day elliptical polar orbit (approx)',         visible: true },
+  ];
+
+  function setLayerVisible(id, on) {
+    var l = LAYERS.find(function(x) { return x.id === id; });
+    if (!l) return;
+    l.visible = on;
+    switch (id) {
+      case 'surface': planet.visible = on; break;
+      case 'grs':     grsMesh.visible = on; break;
+      case 'moons':   moonMeshes.forEach(function(m) { m.mesh.visible = on; }); break;
+      case 'orbits':  moonOrbitLines.forEach(function(l) { l.visible = on; }); break;
+      case 'juno':
+        junoMesh.visible = on;
+        junoOrbitLine.visible = on;
+        break;
+    }
+    renderLayerList();
+  }
+
+  function renderLayerList() {
+    var list = document.getElementById('layer-list');
+    if (!list) return;
+    var html = '';
+    LAYERS.forEach(function(l) {
+      html += '<div class="ly-item" data-layer="' + l.id + '">'
+           + '<button class="ly-check ' + (l.visible ? 'on' : '') + '" data-tog="' + l.id + '"></button>'
+           + '<div class="ly-body">'
+           + '<div class="ly-name">' + l.name + '</div>'
+           + '<div class="ly-desc">' + l.desc + '</div>'
+           + '</div></div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll('[data-tog]').forEach(function(b) {
+      b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var l = LAYERS.find(function(x) { return x.id === b.dataset.tog; });
+        if (l) setLayerVisible(l.id, !l.visible);
+      });
+    });
+    list.querySelectorAll('[data-layer]').forEach(function(b) {
+      b.addEventListener('click', function() {
+        var l = LAYERS.find(function(x) { return x.id === b.dataset.layer; });
+        if (l) setLayerVisible(l.id, !l.visible);
+      });
+    });
+  }
+  // Render sidebar list once DOM is ready
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderLayerList);
+  else renderLayerList();
 
   // Epoch reference in seconds for moon phase computation
   var SCENE_EPOCH_SEC = Date.now() / 1000;
