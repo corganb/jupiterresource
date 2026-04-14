@@ -332,9 +332,36 @@
     period: 53.5 * 86400,
     phase: 0,
   };
-  var junoGeo = new THREE.SphereGeometry(0.04, 16, 12);
-  var junoMat = new THREE.MeshBasicMaterial({ color: 0x7db3ff });
-  var junoMesh = new THREE.Mesh(junoGeo, junoMat);
+  // Juno 3D satellite model: central body + 3 radial solar arrays + antenna.
+  // Juno has three distinctive long solar arrays at 120 deg around the body.
+  function makeJunoModel() {
+    var g = new THREE.Group();
+    var body = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.04, 0.04),
+      new THREE.MeshStandardMaterial({ color: 0xbbbbbb, roughness: 0.4, metalness: 0.6 })
+    );
+    g.add(body);
+    var panelGeo = new THREE.PlaneGeometry(0.18, 0.04);
+    var panelMat = new THREE.MeshStandardMaterial({
+      color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
+      emissive: 0x0a1a44, emissiveIntensity: 0.3
+    });
+    for (var pi = 0; pi < 3; pi++) {
+      var angle = (pi * 2 * Math.PI) / 3;
+      var panel = new THREE.Mesh(panelGeo, panelMat);
+      panel.position.set(Math.cos(angle) * 0.13, 0, Math.sin(angle) * 0.13);
+      panel.rotation.y = angle + Math.PI / 2;
+      g.add(panel);
+    }
+    var dish = new THREE.Mesh(
+      new THREE.ConeGeometry(0.02, 0.015, 16, 1, true),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeee, side: THREE.DoubleSide, roughness: 0.3 })
+    );
+    dish.position.set(0, 0.03, 0);
+    g.add(dish);
+    return g;
+  }
+  var junoMesh = makeJunoModel();
   tiltGroup.add(junoMesh);
   // Text label on Juno
   (function junoLabel() {
@@ -457,7 +484,7 @@
     // Real Io period = 1.77 days = 153000 seconds. At 100x speedup, one Io
     // orbit takes 1530 real seconds = 25 minutes. We use 1000x so Io orbits
     // once per ~2.5 minutes of real time.
-    var TIME_SCALE = 1000;
+    var TIME_SCALE = 300;
     var simTime = secSinceEpoch * TIME_SCALE;
     moonMeshes.forEach(function(m) {
       var n = (Math.PI * 2) / m.period;
@@ -518,7 +545,7 @@
   // Animate
   function tick() {
     requestAnimationFrame(tick);
-    planet.rotation.y += 0.002500;
+    planet.rotation.y += 0.0008793;
     updateMoons();
     controls.update();
     renderer.render(scene, camera);
