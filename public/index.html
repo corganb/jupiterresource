@@ -6,26 +6,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 
-<!-- SEO -->
-<title>JupiterResource | Jupiter Intelligence Platform | Corgan Studio</title>
-<meta name="description" content="Jupiter spatial intelligence platform  -  Juno live data, Galileo archive, Great Red Spot tracking, Europa Clipper telemetry. JupiterResource is part of the Resource Systems multi-planetary intelligence suite by Corgan Studio.">
-<meta name="keywords" content="Jupiter, JupiterResource, Resource Systems, Corgan Studio, spatial intelligence, planetary intelligence, Jason Corgan Brown">
+<title>JupiterResource | Jupiter Spatial Intelligence Platform | Corgan Studio</title>
+<meta name="description" content="JupiterResource is the Corgan Studio Jupiter spatial intelligence platform. Juno mission tracking, Galilean moon orbital mechanics, Great Red Spot monitoring, Europa Clipper and JUICE cruise telemetry.">
+<meta name="keywords" content="Jupiter, JupiterResource, Resource Systems, Corgan Studio, Juno, Galilean moons, Io, Europa, Ganymede, Callisto, Great Red Spot, Europa Clipper, JUICE, spatial intelligence">
 <meta name="author" content="Corgan Studio">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://jupiterresource.net">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jupiterresource.net">
-<meta property="og:title" content="JupiterResource | Jupiter Intelligence Platform">
-<meta property="og:description" content="Jupiter spatial intelligence platform  -  Juno live data, Galileo archive, Great Red Spot tracking, Europa Clipper telemetry">
+<meta property="og:title" content="JupiterResource | Jupiter Intelligence">
+<meta property="og:description" content="Jupiter spatial intelligence with Juno live data, Galilean moon orbits, and deep space mission tracking.">
 <meta property="og:site_name" content="JupiterResource">
-
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@resource_sys">
-<meta name="twitter:title" content="JupiterResource">
-<meta name="twitter:description" content="Jupiter spatial intelligence platform  -  Juno live data, Galileo archive, Great Red Spot tracking, Europa Clipper telemetry">
-
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="theme-color" content="#c88040">
 
@@ -35,22 +29,17 @@
   "@type": "WebSite",
   "name": "JupiterResource",
   "url": "https://jupiterresource.net",
-  "description": "Jupiter spatial intelligence platform  -  Juno live data, Galileo archive, Great Red Spot tracking, Europa Clipper telemetry",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Corgan Studio",
-    "url": "https://corganstudio.com"
-  },
-  "isPartOf": {
-    "@type": "CollectionPage",
-    "name": "Resource Systems",
-    "description": "Multi-planetary spatial intelligence platform suite"
-  }
+  "description": "Jupiter spatial intelligence platform with Juno mission tracking, Galilean moon orbital mechanics, and deep space communications.",
+  "publisher": {"@type":"Organization","name":"Corgan Studio","url":"https://corganstudio.com"},
+  "isPartOf": {"@type":"CollectionPage","name":"Resource Systems"}
 }
 </script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.133.1/Build/Cesium/Widgets/widgets.css">
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.133.1/Build/Cesium/Cesium.js"></script>
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+  * { margin: 0; padding: 0; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
   *::-webkit-scrollbar { width: 4px; }
   *::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
   :root {
@@ -64,20 +53,17 @@
     --t3: #6a7488;
     --t4: #4a5060;
     --accent: #c88040;
-    --accent-bg: rgba(255,255,255,0.05);
-    --accent-border: rgba(255,255,255,0.15);
-    --accent-soft: rgba(255,255,255,0.04);
+    --accent-bg: rgba(200,128,64,0.08);
+    --accent-border: rgba(200,128,64,0.25);
   }
   html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--t1); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   body { display: flex; flex-direction: column; }
 
-  /* Loader */
   #loader { position: fixed; inset: 0; z-index: 500; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; transition: opacity 0.6s; }
   #loader .pulse { width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 38% 38%, #fff8 0%, #c88040 60%, transparent 100%); animation: pulse 1.8s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.15); opacity: 1; } }
   #loader .label { font-size: 10px; color: var(--t3); letter-spacing: 0.12em; text-transform: uppercase; }
 
-  /* Top bar */
   .topbar { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-bottom: 1px solid var(--b1); flex-shrink: 0; z-index: 100; position: relative; }
   .tb-left, .tb-center, .tb-right { display: flex; align-items: center; gap: 6px; }
   .tb-center { flex: 1; justify-content: center; }
@@ -91,20 +77,27 @@
   .tb-btn:hover { color: var(--t1); border-color: rgba(255,255,255,0.25); }
   .tb-btn.active { color: var(--accent); border-color: var(--accent-border); background: var(--accent-bg); }
   .planet-nav { display: flex; gap: 3px; }
-  .tb-footlinks a { color: var(--t2); text-decoration: none; }
+  .tb-footlinks a { color: var(--t2); text-decoration: none; font-size: 9px; opacity: 0.5; }
   .tb-footlinks a:hover { color: var(--accent); }
 
-  /* Main content */
   .content { flex: 1; position: relative; display: flex; min-height: 0; }
-  .sidebar-left { width: 260px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-right: 1px solid var(--b1); overflow-y: auto; padding: 10px; font-size: 11px; color: var(--t2); flex-shrink: 0; transition: transform 0.2s; }
-  .sidebar-left h3 { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); margin: 12px 0 6px; font-weight: 500; }
+  .sidebar-left { width: 280px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-right: 1px solid var(--b1); overflow-y: auto; padding: 10px 12px; font-size: 11px; color: var(--t2); flex-shrink: 0; transition: transform 0.2s; }
+  .sidebar-left h3 { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); margin: 14px 0 6px; font-weight: 500; }
   .sidebar-left .info-row { padding: 4px 0; display: flex; justify-content: space-between; color: var(--t3); border-bottom: 1px dashed rgba(255,255,255,0.04); }
   .sidebar-left .info-row span:last-child { color: var(--t2); }
-  .sidebar-left .coming-soon { margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border: 1px dashed var(--b1); border-radius: 6px; font-size: 10.5px; color: var(--t3); }
-  .viewer { flex: 1; position: relative; background: var(--bg); }
-  #scene { width: 100%; height: 100%; display: block; }
+  .ly-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.04); cursor: pointer; }
+  .ly-item:hover { background: rgba(255,255,255,0.02); }
+  .ly-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--b2); flex-shrink: 0; margin-top: 2px; background: transparent; cursor: pointer; }
+  .ly-check.on { background: var(--accent); border-color: var(--accent); }
+  .ly-body { flex: 1; min-width: 0; }
+  .ly-name { font-size: 11.5px; color: var(--t2); }
+  .ly-desc { font-size: 10px; color: var(--t4); margin-top: 2px; line-height: 1.4; }
+  .source-tag { font-size: 8px; color: var(--t4); padding: 1px 5px; border: 1px solid var(--b1); border-radius: 3px; margin-left: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
 
-  /* Sidebar toggle (mobile) */
+  .viewer { flex: 1; position: relative; background: var(--bg); }
+  #cesiumContainer { width: 100%; height: 100%; }
+  .cesium-viewer-bottom, .cesium-widget-credits { display: none !important; }
+
   .sb-toggle { display: none; position: absolute; top: 8px; left: 8px; width: 36px; height: 36px; background: var(--panel-bg); border: 1px solid var(--b2); border-radius: 6px; color: var(--t1); font-size: 18px; cursor: pointer; z-index: 90; }
   @media (max-width: 768px) {
     .sidebar-left { position: absolute; left: 0; top: 0; bottom: 0; z-index: 80; transform: translateX(-100%); }
@@ -112,20 +105,17 @@
     .sb-toggle { display: block; }
   }
 
-  /* DSN live panel */
   #dsn-panel { position: absolute; right: 10px; bottom: 10px; width: 260px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border: 1px solid var(--b1); border-radius: 8px; padding: 10px 12px; font-size: 10px; color: var(--t3); max-height: 220px; overflow-y: auto; }
   #dsn-panel .dsn-head { display: flex; align-items: center; gap: 6px; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); margin-bottom: 6px; }
   #dsn-panel .dsn-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; flex-shrink: 0; }
   @keyframes dsn-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  /* Status bar */
   .statusbar { height: 22px; flex-shrink: 0; background: var(--panel-bg); border-top: 1px solid var(--b1); display: flex; align-items: center; padding: 0 12px; font-size: 9.5px; color: var(--t4); letter-spacing: 0.03em; gap: 20px; }
   .statusbar-cell { display: flex; gap: 4px; }
   .statusbar-cell .label { color: var(--t4); text-transform: uppercase; letter-spacing: 0.08em; }
   .statusbar-cell .value { color: var(--t2); }
   .sb-cells-right { margin-left: auto; display: flex; gap: 20px; }
 
-  /* Toast */
   #rs-toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 300; background: rgba(14,16,20,0.92); backdrop-filter: blur(12px); border: 1px solid var(--b2); border-radius: 8px; padding: 8px 18px; font-size: 12px; color: var(--t1); pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
 </style>
 </head>
@@ -151,7 +141,7 @@
   </div>
   <div class="tb-right">
     <div id="auth-btn-container"></div>
-    <span class="tb-footlinks" style="display:flex;gap:8px;margin-left:8px;font-size:9px;opacity:0.35"><a href="https://instagram.com/resourcesystems" target="_blank" style="color:var(--t2);text-decoration:none">IG</a><a href="https://x.com/resource_sys" target="_blank" style="color:var(--t2);text-decoration:none">X</a><a href="/faq" style="color:var(--t2);text-decoration:none">FAQ</a><a href="/privacy" style="color:var(--t2);text-decoration:none">Privacy</a><a href="/terms" style="color:var(--t2);text-decoration:none">Terms</a></span>
+    <span class="tb-footlinks" style="display:flex;gap:8px;margin-left:8px"><a href="https://instagram.com/resourcesystems" target="_blank">IG</a><a href="https://x.com/resource_sys" target="_blank">X</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></span>
   </div>
 </div>
 
@@ -159,28 +149,33 @@
 
 <div class="content">
   <div class="sidebar-left">
-    <h3>Body Facts</h3>
-    <div class="info-row"><span>Radius</span><span>69,911 km</span></div>
-    <div class="info-row"><span>Mass</span><span>1.898 × 10²⁷ kg</span></div>
-    <div class="info-row"><span>Moons</span><span>95 known (4 Galilean)</span></div>
+    <h3>Jupiter Body Facts</h3>
+    <div class="info-row"><span>Radius (eq.)</span><span>71,492 km</span></div>
+    <div class="info-row"><span>Radius (polar)</span><span>66,854 km</span></div>
+    <div class="info-row"><span>Mass</span><span>1.898&times;10&sup2;&sup7; kg</span></div>
+    <div class="info-row"><span>Rotation</span><span>9h 55m</span></div>
     <div class="info-row"><span>Axial tilt</span><span>3.13&deg;</span></div>
-    <div class="info-row"><span>Orbital period</span><span>11.86 yr</span></div>
-    <div class="info-row"><span>Sidereal day</span><span>9h 55m</span></div>
-    <div class="info-row"><span>Dist. from Sun</span><span>778.5 M km (5.20 AU)</span></div>
+    <div class="info-row"><span>Orbit</span><span>11.86 yr</span></div>
+    <div class="info-row"><span>Distance (Sun)</span><span>5.20 AU</span></div>
+    <div class="info-row"><span>Moons</span><span>95 known</span></div>
 
-    <h3>Roadmap v0.2</h3>
-    <div class="coming-soon">
-      Great Red Spot tracking; Juno atmospheric data; Galilean moon ephemeris; Europa Clipper live flyby; cloud band dynamics.
-    </div>
+    <h3>Layers</h3>
+    <div id="layer-list"></div>
 
-    <h3>Resource Systems</h3>
-    <div class="info-row"><span>Sibling sites</span><span>13</span></div>
-    <div class="info-row"><span>Auth</span><span>Shared</span></div>
-    <div class="info-row"><span>DSN feed</span><span>Live</span></div>
+    <h3>Galilean Moons</h3>
+    <div class="info-row"><span>Io</span><span>421,800 km</span></div>
+    <div class="info-row"><span>Europa</span><span>671,100 km</span></div>
+    <div class="info-row"><span>Ganymede</span><span>1,070,400 km</span></div>
+    <div class="info-row"><span>Callisto</span><span>1,882,700 km</span></div>
+
+    <h3>Active Missions</h3>
+    <div class="info-row"><span>Juno</span><span>In orbit</span></div>
+    <div class="info-row"><span>Europa Clipper</span><span>Cruise</span></div>
+    <div class="info-row"><span>JUICE (ESA)</span><span>Cruise</span></div>
   </div>
 
   <div class="viewer">
-    <canvas id="scene"></canvas>
+    <div id="cesiumContainer"></div>
 
     <div id="dsn-panel">
       <div class="dsn-head"><span id="dsn-dot" class="dsn-dot"></span> Deep Space Network</div>
@@ -190,117 +185,312 @@
 </div>
 
 <div class="statusbar">
-  <div class="statusbar-cell"><span class="label">FRAME</span><span class="value">Body-Fixed</span></div>
+  <div class="statusbar-cell"><span class="label">FRAME</span><span class="value">Jupiter-Fixed (J2000)</span></div>
   <div class="statusbar-cell"><span class="label">BODY</span><span class="value">Jupiter</span></div>
+  <div class="statusbar-cell"><span class="label">EPOCH</span><span class="value" id="sb-epoch">-</span></div>
   <div class="sb-cells-right">
-    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.1</span></div>
+    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.2</span></div>
   </div>
 </div>
 
 <div id="rs-toast"></div>
 
-<!-- Three.js (via jsdelivr UMD) -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <script src="resource-systems-core.js?v=10"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// JupiterResource v0.1 - minimal Three.js scaffold
-// Part of the Resource Systems suite by Corgan Studio.
+// JupiterResource v0.2 - Cesium-based Jupiter intelligence
 // ═══════════════════════════════════════════════════════════════════════════
 
-(function initScene() {
-  var canvas = document.getElementById('scene');
-  var scene = new THREE.Scene();
-  scene.background = new THREE.Color('#0b0806');
+var LAYERS = [
+  { id: 'jupiter',       title: 'Jupiter Globe',       desc: 'Cloud-band surface imagery (Cassini/Voyager composite)', source: 'nasa', visible: true },
+  { id: 'grs',           title: 'Great Red Spot',      desc: 'Long-lived anticyclonic storm, ~22S latitude', source: 'nasa', visible: true },
+  { id: 'moons',         title: 'Galilean Moons',      desc: 'Io, Europa, Ganymede, Callisto at current orbital positions', source: 'jpl', visible: true },
+  { id: 'juno',          title: 'Juno Spacecraft',     desc: 'Approximate elliptical orbit (full JPL Horizons in v0.3)', source: 'jpl', visible: true },
+  { id: 'orbits',        title: 'Moon Orbit Lines',    desc: 'Circular approximations of Galilean moon orbits', source: 'jpl', visible: true },
+  { id: 'rings',         title: 'Jupiter Rings',       desc: 'Main ring at ~125,000 km', source: 'nasa', visible: false },
+  { id: 'magnetosphere', title: 'Magnetosphere',       desc: 'Magnetopause boundary (3 million km)', source: 'nasa', visible: false },
+];
 
-  var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
-  camera.position.set(0, 1.2, 4);
+var JUPITER_EQ_RADIUS = 71492e3;
+var JUPITER_POLAR_RADIUS = 66854e3;
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+var GALILEAN = [
+  { id: 'io',       name: 'Io',       a: 421800e3,  e: 0.0041, period: 1.769 * 86400, color: '#ffeebb', radius: 1821.6e3 },
+  { id: 'europa',   name: 'Europa',   a: 671100e3,  e: 0.0094, period: 3.551 * 86400, color: '#d8c8a0', radius: 1560.8e3 },
+  { id: 'ganymede', name: 'Ganymede', a: 1070400e3, e: 0.0013, period: 7.154 * 86400, color: '#a8a090', radius: 2634.1e3 },
+  { id: 'callisto', name: 'Callisto', a: 1882700e3, e: 0.0074, period: 16.689 * 86400, color: '#888078', radius: 2410.3e3 },
+];
 
-  // Lights
-  var ambient = new THREE.AmbientLight(0xffffff, 0.18);
-  scene.add(ambient);
-  var sun = new THREE.DirectionalLight(0xffffff, 1.0);
-  sun.position.set(5, 2, 5);
-  scene.add(sun);
+var JUNO = {
+  a: 4.055e9,
+  e: 0.9471,
+  i: 104.9,
+  om: 1.0,
+  w: 2.7,
+  ma0: 0.0,
+  epoch: 2460774.5,
+  period: 53.5 * 86400,
+};
 
-  // Planet sphere with NASA-style surface texture from Terra CDN
-  var geometry = new THREE.SphereGeometry(1.5, 96, 64);
-  var texLoader = new THREE.TextureLoader();
-  texLoader.crossOrigin = 'anonymous';
-  var material = new THREE.MeshStandardMaterial({
-    map: texLoader.load('https://terraresource.net/assets/planet-textures/2k_jupiter.jpg'),
-    roughness: 0.85,
-    metalness: 0.0
-  });
-  var planet = new THREE.Mesh(geometry, material);
-  // Tilt group holds the axial tilt; planet spins around its local Y
-  // axis inside the tilt group, so sidereal rotation is correct.
-  var tiltGroup = new THREE.Group();
-  tiltGroup.rotation.z = 0.054629; // 3.13 deg axial tilt
-  scene.add(tiltGroup);
-  tiltGroup.add(planet);
+var cesiumViewer;
+var sceneObjects = {};
 
-  // Subtle starfield
-  (function stars() {
-    var geo = new THREE.BufferGeometry();
-    var count = 3000;
-    var pos = new Float32Array(count * 3);
-    for (var i = 0; i < count; i++) {
-      var r = 600 + Math.random() * 400;
-      var th = Math.random() * Math.PI * 2;
-      var ph = Math.acos(2 * Math.random() - 1);
-      pos[i*3]   = r * Math.sin(ph) * Math.cos(th);
-      pos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
-      pos[i*3+2] = r * Math.cos(ph);
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    var mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, sizeAttenuation: false, transparent: true, opacity: 0.8 });
-    scene.add(new THREE.Points(geo, mat));
-  })();
+function initGlobe() {
+  var el = document.getElementById('cesiumContainer');
+  if (!el || cesiumViewer) return;
 
-  // Controls
-  var controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.minDistance = 2.2;
-  controls.maxDistance = 40;
+  // Custom Jupiter oblate ellipsoid (71492 x 71492 x 66854 km)
+  Cesium.Ellipsoid.default = new Cesium.Ellipsoid(JUPITER_EQ_RADIUS, JUPITER_EQ_RADIUS, JUPITER_POLAR_RADIUS);
 
-  // Resize
-  window.addEventListener('resize', function () {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  cesiumViewer = new Cesium.Viewer(el, {
+    baseLayerPicker: false, geocoder: false, homeButton: false, sceneModePicker: false,
+    navigationHelpButton: false, animation: false, timeline: false, vrButton: false,
+    infoBox: false, selectionIndicator: false,
+    creditContainer: document.createElement('div'),
+    imageryProvider: false,
+    skyAtmosphere: false,
   });
 
-  // Animate
-  function tick() {
-    requestAnimationFrame(tick);
-    planet.rotation.y += 0.002500;
-    controls.update();
-    renderer.render(scene, camera);
+  var globe = cesiumViewer.scene.globe;
+  globe.enableLighting = false;
+  globe.baseColor = Cesium.Color.fromCssColorString('#3a2a18');
+  globe.showGroundAtmosphere = false;
+  globe.depthTestAgainstTerrain = true;
+
+  var scene = cesiumViewer.scene;
+  scene.backgroundColor = Cesium.Color.fromCssColorString('#0b0806');
+  if (scene.fog) scene.fog.enabled = false;
+  if (scene.sun) scene.sun.show = false;
+  if (scene.moon) scene.moon.show = false;
+
+  var jupiterTex = new Cesium.SingleTileImageryProvider({
+    url: 'https://terraresource.net/assets/planet-textures/2k_jupiter.jpg',
+    rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
+    credit: 'Solar System Scope (CC-BY 4.0)',
+  });
+  var jupiterLayer = cesiumViewer.imageryLayers.addImageryProvider(jupiterTex);
+  jupiterLayer.brightness = 1.05;
+  jupiterLayer.saturation = 1.1;
+  sceneObjects['jupiter'] = { imageryLayer: jupiterLayer };
+
+  cesiumViewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(0, 0, 500000000),
+    orientation: { heading: 0, pitch: Cesium.Math.toRadians(-45), roll: 0 },
+    duration: 0,
+  });
+  if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) {
+    cesiumViewer.resolutionScale = window.devicePixelRatio;
   }
-  tick();
+  scene.screenSpaceCameraController.minimumZoomDistance = 100000;
 
-  // Fade loader
-  setTimeout(function () {
-    var l = document.getElementById('loader');
-    if (l) { l.style.opacity = '0'; setTimeout(function () { l.style.display = 'none'; }, 600); }
-  }, 900);
-})();
+  buildInitialLayers();
+  startEpochClock();
+}
 
-// ═══ TOP BAR WIRING (shared core) ═══
+function buildInitialLayers() {
+  LAYERS.forEach(function(l) {
+    if (l.visible && !sceneObjects[l.id]) buildLayer(l.id);
+  });
+  renderSidebar();
+}
+
+function buildLayer(id) {
+  var v = cesiumViewer;
+  if (!v) return;
+  switch (id) {
+    case 'jupiter':
+      break;
+    case 'grs':
+      sceneObjects['grs'] = [v.entities.add({
+        name: 'Great Red Spot',
+        position: Cesium.Cartesian3.fromDegrees(-75, -22, 500000),
+        point: { pixelSize: 14, color: Cesium.Color.fromCssColorString('#d83a20'), outlineColor: Cesium.Color.BLACK, outlineWidth: 1.5 },
+        label: { text: 'GRS', font: '10px "JetBrains Mono", monospace', fillColor: Cesium.Color.fromCssColorString('#ffaaaa'), outlineColor: Cesium.Color.BLACK, outlineWidth: 3, style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(10, 0), disableDepthTestDistance: Number.POSITIVE_INFINITY },
+        description: '<b>Great Red Spot</b><br>An anticyclonic storm larger than Earth, active for at least 400 years.',
+      })];
+      break;
+    case 'moons':
+      var out = [];
+      GALILEAN.forEach(function(m) {
+        out.push(v.entities.add({
+          name: m.name,
+          position: new Cesium.CallbackProperty(function() { return moonPosition(m, v.clock.currentTime); }, false),
+          point: { pixelSize: 10, color: Cesium.Color.fromCssColorString(m.color), outlineColor: Cesium.Color.BLACK, outlineWidth: 1.5, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+          label: { text: m.name, font: '10px "JetBrains Mono", monospace', fillColor: Cesium.Color.fromCssColorString(m.color), outlineColor: Cesium.Color.BLACK, outlineWidth: 3, style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(12, 0), disableDepthTestDistance: Number.POSITIVE_INFINITY },
+          description: '<b>' + m.name + '</b><br>Semi-major axis: ' + (m.a / 1e3).toLocaleString() + ' km<br>Orbital period: ' + (m.period / 86400).toFixed(2) + ' days<br>Radius: ' + (m.radius / 1e3).toFixed(0) + ' km',
+        }));
+      });
+      sceneObjects['moons'] = out;
+      break;
+    case 'orbits':
+      var orbitOut = [];
+      GALILEAN.forEach(function(m) {
+        var pts = [];
+        for (var k = 0; k <= 128; k++) {
+          var theta = (k / 128) * Math.PI * 2;
+          pts.push(m.a * Math.cos(theta), m.a * Math.sin(theta), 0);
+        }
+        orbitOut.push(v.entities.add({
+          name: m.name + ' orbit',
+          polyline: {
+            positions: Cesium.Cartesian3.unpackArray(pts),
+            width: 1.2,
+            material: Cesium.Color.fromCssColorString(m.color).withAlpha(0.35),
+            arcType: Cesium.ArcType.NONE,
+          },
+        }));
+      });
+      sceneObjects['orbits'] = orbitOut;
+      break;
+    case 'juno':
+      sceneObjects['juno'] = [v.entities.add({
+        name: 'Juno',
+        position: new Cesium.CallbackProperty(function() { return junoPosition(v.clock.currentTime); }, false),
+        point: { pixelSize: 8, color: Cesium.Color.fromCssColorString('#7db3ff'), outlineColor: Cesium.Color.WHITE, outlineWidth: 1.5, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+        label: { text: 'Juno', font: '10px "JetBrains Mono", monospace', fillColor: Cesium.Color.fromCssColorString('#7db3ff'), outlineColor: Cesium.Color.BLACK, outlineWidth: 3, style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(10, 0), disableDepthTestDistance: Number.POSITIVE_INFINITY },
+        description: '<b>Juno</b><br>NASA / SWRI.<br>Launched 2011, Jupiter orbit insertion 2016.<br>53-day highly elliptical polar orbit.<br>Perijove: ~4,200 km altitude.',
+      })];
+      break;
+    case 'rings':
+      sceneObjects['rings'] = [v.entities.add({
+        name: 'Jupiter Rings',
+        position: Cesium.Cartesian3.ZERO,
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(129000e3, 129000e3, 100),
+          innerRadii: new Cesium.Cartesian3(122500e3, 122500e3, 100),
+          material: Cesium.Color.fromCssColorString('#c88040').withAlpha(0.25),
+          outline: false,
+        },
+      })];
+      break;
+    case 'magnetosphere':
+      sceneObjects['magnetosphere'] = [v.entities.add({
+        name: 'Magnetopause boundary',
+        position: Cesium.Cartesian3.ZERO,
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(3000000e3, 3000000e3, 3000000e3),
+          material: Cesium.Color.fromCssColorString('#4da6ff').withAlpha(0.06),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#4da6ff').withAlpha(0.2),
+        },
+      })];
+      showToast('Magnetosphere scale may require zooming out significantly');
+      break;
+  }
+}
+
+function moonPosition(moon, julianDate) {
+  var secSinceEpoch = Cesium.JulianDate.toDate(julianDate).getTime() / 1000;
+  var n = (Math.PI * 2) / moon.period;
+  var M = (n * secSinceEpoch) % (Math.PI * 2);
+  var E = solveKepler(M, moon.e);
+  var nu = 2 * Math.atan2(Math.sqrt(1 + moon.e) * Math.sin(E / 2), Math.sqrt(1 - moon.e) * Math.cos(E / 2));
+  var r = moon.a * (1 - moon.e * Math.cos(E));
+  return new Cesium.Cartesian3(r * Math.cos(nu), r * Math.sin(nu), 0);
+}
+
+function junoPosition(julianDate) {
+  var currJd = Cesium.JulianDate.toDate(julianDate).getTime() / 86400000 + 2440587.5;
+  var daysSince = currJd - JUNO.epoch;
+  var secSince = daysSince * 86400;
+  var n = (Math.PI * 2) / JUNO.period;
+  var M = (JUNO.ma0 + n * secSince) % (Math.PI * 2);
+  var E = solveKepler(M, JUNO.e);
+  var nu = 2 * Math.atan2(Math.sqrt(1 + JUNO.e) * Math.sin(E / 2), Math.sqrt(1 - JUNO.e) * Math.cos(E / 2));
+  var r = JUNO.a * (1 - JUNO.e * Math.cos(E));
+  var xp = r * Math.cos(nu);
+  var yp = r * Math.sin(nu);
+  var cw = Math.cos(JUNO.w), sw = Math.sin(JUNO.w);
+  var ci = Math.cos(JUNO.i * Math.PI / 180), si = Math.sin(JUNO.i * Math.PI / 180);
+  var co = Math.cos(JUNO.om), so = Math.sin(JUNO.om);
+  var x1 = xp * cw - yp * sw;
+  var y1 = xp * sw + yp * cw;
+  var x = (co * x1 - so * y1 * ci);
+  var y = (so * x1 + co * y1 * ci);
+  var z = (y1 * si);
+  return new Cesium.Cartesian3(x, y, z);
+}
+
+function solveKepler(M, e) {
+  var E = M;
+  for (var i = 0; i < 20; i++) {
+    var f = E - e * Math.sin(E) - M;
+    var fp = 1 - e * Math.cos(E);
+    E -= f / fp;
+  }
+  return E;
+}
+
+function toggleLayer(id) {
+  var l = LAYERS.find(function(x) { return x.id === id; });
+  if (!l) return;
+  l.visible = !l.visible;
+  if (l.visible) {
+    if (id === 'jupiter') {
+      if (sceneObjects.jupiter && sceneObjects.jupiter.imageryLayer) sceneObjects.jupiter.imageryLayer.show = true;
+    } else if (!sceneObjects[id] || (Array.isArray(sceneObjects[id]) && sceneObjects[id].length === 0)) {
+      buildLayer(id);
+    } else {
+      setEntitiesVisible(sceneObjects[id], true);
+    }
+  } else {
+    if (id === 'jupiter') {
+      if (sceneObjects.jupiter && sceneObjects.jupiter.imageryLayer) sceneObjects.jupiter.imageryLayer.show = false;
+    } else {
+      setEntitiesVisible(sceneObjects[id], false);
+    }
+  }
+  renderSidebar();
+}
+
+function setEntitiesVisible(objs, visible) {
+  if (!objs) return;
+  if (!Array.isArray(objs)) objs = [objs];
+  objs.forEach(function(o) {
+    if (o && typeof o === 'object' && 'show' in o) o.show = visible;
+  });
+}
+
+function renderSidebar() {
+  var list = document.getElementById('layer-list');
+  if (!list) return;
+  var html = '';
+  LAYERS.forEach(function(l) {
+    html += '<div class="ly-item" data-layer="' + l.id + '">'
+         + '<button class="ly-check ' + (l.visible ? 'on' : '') + '" data-tog="' + l.id + '"></button>'
+         + '<div class="ly-body">'
+         + '<div class="ly-name">' + l.title + ' <span class="source-tag">' + l.source + '</span></div>'
+         + '<div class="ly-desc">' + l.desc + '</div>'
+         + '</div></div>';
+  });
+  list.innerHTML = html;
+  list.querySelectorAll('[data-tog]').forEach(function(b) {
+    b.addEventListener('click', function(e) { e.stopPropagation(); toggleLayer(b.dataset.tog); });
+  });
+  list.querySelectorAll('[data-layer]').forEach(function(b) {
+    b.addEventListener('click', function() { toggleLayer(b.dataset.layer); });
+  });
+}
+
+function showToast(msg) { if (window.RS && RS.showToast) RS.showToast(msg); }
+
+function startEpochClock() {
+  var el = document.getElementById('sb-epoch');
+  setInterval(function() {
+    if (el && cesiumViewer) {
+      try {
+        var jd = Cesium.JulianDate.toDate(cesiumViewer.clock.currentTime).toISOString().split('T')[0];
+        el.textContent = jd;
+      } catch(e) {}
+    }
+  }, 1000);
+}
+
 (function initTopBar() {
   function ready() {
     var brandEl = document.querySelector('.tb-brand-mark');
-    if (brandEl && RS && RS.BRAND_MARKS) {
-      brandEl.innerHTML = RS.BRAND_MARKS['jupiter'] || RS.BRAND_MARKS.solarsystem || '';
-    }
+    if (brandEl && RS && RS.BRAND_MARKS) brandEl.innerHTML = RS.BRAND_MARKS.jupiter || '';
     var navEl = document.getElementById('planet-nav');
     if (navEl && RS && RS.renderPlanetNav) {
       try { navEl.innerHTML = RS.renderPlanetNav('jupiter'); } catch(e) {}
@@ -314,7 +504,6 @@
   else ready();
 })();
 
-// ═══ DSN LIVE PANEL (shared Supabase edge function) ═══
 (function initDSN() {
   var URL_ = 'https://pxocavaczfjcpvqeiznt.supabase.co/functions/v1/dsn-status';
   var KEY = 'sb_publishable_1IZ6cL3vvPdAc1f8u2ah6w_-txoo_VL';
@@ -322,11 +511,11 @@
     fetch(URL_, { headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY } })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var content = document.getElementById('dsn-content');
+        var c = document.getElementById('dsn-content');
         var dot = document.getElementById('dsn-dot');
-        if (!content) return;
+        if (!c) return;
         if (!data || !data.stations) {
-          content.innerHTML = '<div style="color:rgba(255,255,255,0.4)">No active contacts</div>';
+          c.innerHTML = '<div style="color:rgba(255,255,255,0.4)">No active contacts</div>';
           if (dot) dot.style.background = '#fbbf24';
           return;
         }
@@ -334,42 +523,52 @@
         data.stations.forEach(function(st) {
           html += '<div style="margin-bottom:6px"><div style="color:var(--accent);font-weight:500">' + st.name + '</div>';
           st.dishes.forEach(function(d) {
-            var active = d.targets.filter(function(t) { return t.name !== 'DSN' && t.name !== 'DSS'; });
-            if (active.length === 0) return;
+            var act = d.targets.filter(function(t) { return t.name !== 'DSN' && t.name !== 'DSS'; });
+            if (act.length === 0) return;
             html += '<div style="margin-left:8px;color:rgba(255,255,255,0.6)">' + d.name + ' | ' + (d.activity || '') + '</div>';
-            active.forEach(function(t) {
+            act.forEach(function(t) {
               html += '<div style="margin-left:16px;color:rgba(255,255,255,0.5);font-size:9.5px">' + t.name + '</div>';
             });
           });
           html += '</div>';
         });
-        content.innerHTML = html;
+        c.innerHTML = html;
         if (dot) { dot.style.background = '#4ade80'; dot.style.animation = 'dsn-pulse 2s infinite'; }
       })
       .catch(function() {
         var dot = document.getElementById('dsn-dot');
-        if (dot) { dot.style.background = '#ef4444'; }
+        if (dot) dot.style.background = '#ef4444';
       });
   }
   poll();
   setInterval(poll, 45000);
 })();
 
-// ═══ AUTH INIT ═══
 (function initAuth() {
-  if (RS && RS.checkSession) {
+  if (window.RS && RS.checkSession) {
     try { RS.checkSession(function() {
-      var authEl = document.getElementById('auth-btn-container');
-      if (authEl && RS.renderAuthButton) authEl.innerHTML = RS.renderAuthButton();
+      var el = document.getElementById('auth-btn-container');
+      if (el && RS.renderAuthButton) el.innerHTML = RS.renderAuthButton();
     }); } catch(e) {}
   }
 })();
+
+(function start() {
+  function tryInit() {
+    if (typeof Cesium === 'undefined') { setTimeout(tryInit, 50); return; }
+    try { initGlobe(); } catch(e) { console.error('[Jupiter] initGlobe failed:', e); }
+    setTimeout(function() {
+      var l = document.getElementById('loader');
+      if (l) { l.style.opacity = '0'; setTimeout(function() { l.style.display = 'none'; }, 600); }
+    }, 1200);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tryInit);
+  else tryInit();
+})();
 </script>
 
-<!-- SEO: crawlable body text -->
 <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;font-size:12px;color:#333;line-height:1.6">
-  <p>JupiterResource is the Corgan Studio Jupiter intelligence platform. Part of the Resource Systems multi-planetary suite alongside <a href="https://terraresource.net">TerraResource</a>, <a href="https://moonresource.com">MoonResource</a>, <a href="https://marsresource.net">MarsResource</a>, <a href="https://solarsystemresource.com">SolarSystemResource</a>, built by <a href="https://corganstudio.com">Corgan Studio</a>.</p>
+  <p>JupiterResource is the Corgan Studio Jupiter spatial intelligence platform. Juno mission tracking, Galilean moon orbital mechanics, Great Red Spot monitoring. Part of the Resource Systems multi-planetary suite alongside <a href="https://terraresource.net">TerraResource</a>, <a href="https://moonresource.com">MoonResource</a>, <a href="https://marsresource.net">MarsResource</a>, <a href="https://solarsystemresource.com">SolarSystemResource</a>, <a href="https://galacticresource.com">GalacticResource</a>.</p>
 </div>
-
 </body>
 </html>
