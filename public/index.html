@@ -256,6 +256,22 @@
   ];
   var moonMeshes = [];
   var moonOrbitLines = [];
+  // Small helper to build a sprite label attached to a mesh
+  function makeLabel(text, color) {
+    var c = document.createElement('canvas');
+    c.width = 256; c.height = 48;
+    var x = c.getContext('2d');
+    x.font = 'bold 22px -apple-system, sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.strokeStyle = '#000'; x.lineWidth = 4;
+    x.strokeText(text, 128, 24);
+    x.fillStyle = color;
+    x.fillText(text, 128, 24);
+    var tex = new THREE.CanvasTexture(c);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
+    sp.scale.set(0.5, 0.094, 1);
+    return sp;
+  }
   GALILEAN.forEach(function(m) {
     m.a = m.a_km / SCENE_UNIT_KM;
     m.period = m.period_days * 86400;
@@ -265,6 +281,10 @@
     tiltGroup.add(mesh);
     m.mesh = mesh;
     moonMeshes.push(m);
+    // Attach text label
+    var label = makeLabel(m.name, '#' + m.color.toString(16).padStart(6, '0'));
+    label.position.set(0, m.radius + 0.05, 0);
+    mesh.add(label);
 
     var segments = 128;
     var orbitPoints = [];
@@ -290,24 +310,49 @@
     return E;
   }
 
-  // ═══ JUNO SPACECRAFT (approximate elliptical polar orbit) ═══
-  // Real Juno: a ~4.055e6 km, e ~0.9471, i ~104.9 deg, period ~53.5 d
-  // In scene units (1 unit = 47661 km): a = 85.1 units
-  // That's WAY outside the Galilean orbits (up to 40 units for Callisto).
-  // For visibility we compress Juno's semi-major axis to 15 units while
-  // keeping its eccentricity and inclination. Not physically accurate scale
-  // but visually communicates the highly elliptical polar orbit.
+  // ═══ JUNO SPACECRAFT (real orbital elements) ═══
+  // NASA Juno 53-day polar orbit (53-day capture orbit, 2016-present):
+  //   Periapsis:    ~4,200 km altitude above cloud tops
+  //   Apoapsis:     ~8.1 million km from Jupiter center
+  //   Semi-major:   ~4.055 million km
+  //   Eccentricity: 0.9471
+  //   Inclination:  104.9 deg (retrograde polar)
+  //   Period:       53.5 days
+  //
+  // Scene scale: Jupiter radius 1.5 = 71,492 km, 1 unit = 47,661 km.
+  // Juno semi-major axis at real scale: 4055000 / 47661 = 85.1 scene units.
+  // That puts Juno's apoapsis far beyond the default camera frame but
+  // within OrbitControls max zoom (500). Users zoom out to see the full
+  // orbit. Periapsis is just above Jupiter's surface at ~1.6 units.
+  var JUPITER_SCENE_UNIT_KM = 71492 / 1.5;
   var JUNO = {
-    a: 15,
+    a: 4055000 / JUPITER_SCENE_UNIT_KM,  // ~85.1 scene units
     e: 0.9471,
     i: 104.9 * Math.PI / 180,
     period: 53.5 * 86400,
     phase: 0,
   };
-  var junoGeo = new THREE.SphereGeometry(0.08, 16, 12);
+  var junoGeo = new THREE.SphereGeometry(0.04, 16, 12);
   var junoMat = new THREE.MeshBasicMaterial({ color: 0x7db3ff });
   var junoMesh = new THREE.Mesh(junoGeo, junoMat);
   tiltGroup.add(junoMesh);
+  // Text label on Juno
+  (function junoLabel() {
+    var c = document.createElement('canvas');
+    c.width = 256; c.height = 48;
+    var x = c.getContext('2d');
+    x.font = 'bold 22px -apple-system, sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.strokeStyle = '#000'; x.lineWidth = 4;
+    x.strokeText('Juno', 128, 24);
+    x.fillStyle = '#7db3ff';
+    x.fillText('Juno', 128, 24);
+    var tex = new THREE.CanvasTexture(c);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
+    sp.scale.set(0.5, 0.094, 1);
+    sp.position.set(0, 0.1, 0);
+    junoMesh.add(sp);
+  })();
   // Juno's highly elliptical orbit polyline
   var junoOrbitLine;
   (function junoOrbit() {
