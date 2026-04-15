@@ -262,11 +262,17 @@
   // So 1 scene unit = 47661 km. Io orbits at 421,800 km real = 8.85 units.
   // We compress slightly so all 4 Galileans fit within the default zoom.
   var SCENE_UNIT_KM = 71492 / 1.5; // km per scene unit
+  // Real NASA fact-sheet elements for the 4 Galileans plus Amalthea
+  // (innermost major moon) and Himalia (largest irregular outer moon).
+  // Amalthea orbits INSIDE Io at just 181,366 km; Himalia orbits at
+  // ~11.46 million km, well outside Callisto's orbit.
   var GALILEAN = [
-    { name: 'Io',       a_km: 421800,  e: 0.0041, period_days: 1.769,  color: 0xffeebb, radius: 0.08 },
-    { name: 'Europa',   a_km: 671100,  e: 0.0094, period_days: 3.551,  color: 0xd8c8a0, radius: 0.07 },
-    { name: 'Ganymede', a_km: 1070400, e: 0.0013, period_days: 7.154,  color: 0xa8a090, radius: 0.09 },
-    { name: 'Callisto', a_km: 1882700, e: 0.0074, period_days: 16.689, color: 0x888078, radius: 0.08 },
+    { name: 'Amalthea', a_km: 181366,   e: 0.0031, period_days:  0.498, color: 0xa85530, radius: 0.025 },
+    { name: 'Io',       a_km: 421800,   e: 0.0041, period_days:  1.769, color: 0xffeebb, radius: 0.08 },
+    { name: 'Europa',   a_km: 671100,   e: 0.0094, period_days:  3.551, color: 0xd8c8a0, radius: 0.07 },
+    { name: 'Ganymede', a_km: 1070400,  e: 0.0013, period_days:  7.154, color: 0xa8a090, radius: 0.09 },
+    { name: 'Callisto', a_km: 1882700,  e: 0.0074, period_days: 16.689, color: 0x888078, radius: 0.08 },
+    { name: 'Himalia',  a_km: 11460000, e: 0.1623, period_days:250.566, color: 0x605850, radius: 0.035 },
   ];
   var moonMeshes = [];
   var moonOrbitLines = [];
