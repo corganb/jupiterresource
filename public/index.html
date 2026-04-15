@@ -432,6 +432,80 @@
     planet.add(grsMesh);
   })();
 
+  // ═══ FUTURE MISSIONS: EUROPA CLIPPER + JUICE ═══
+  // NASA Europa Clipper: launched 2024-10-14, Jupiter orbit insertion 2030.
+  // ESA JUICE: launched 2023-04-14, Jupiter orbit insertion 2031.
+  // Both rendered at illustrative cruise-phase positions with trajectory
+  // hint lines toward Jupiter. Each lives in its own toggleable Group.
+  var futureMissionsGroup = new THREE.Group();
+  tiltGroup.add(futureMissionsGroup);
+
+  function makeCruiseSpacecraft(name, color) {
+    var g = new THREE.Group();
+    // Small box bus
+    g.add(new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.06, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0xe0dcd0, roughness: 0.4, metalness: 0.55 })
+    ));
+    // Two long solar panel wings (Europa Clipper has huge arrays)
+    var panelMat = new THREE.MeshStandardMaterial({
+      color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
+      emissive: 0x0a1a44, emissiveIntensity: 0.3,
+    });
+    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.40, 0.09), panelMat);
+    lw.position.set(-0.26, 0, 0);
+    g.add(lw);
+    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.40, 0.09), panelMat);
+    rw.position.set(0.26, 0, 0);
+    g.add(rw);
+    // HGA dish
+    var dish = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 0.005, 20),
+      new THREE.MeshStandardMaterial({ color: 0xeeeae0, roughness: 0.3, metalness: 0.4 })
+    );
+    dish.position.set(0, 0.08, 0);
+    g.add(dish);
+
+    // Canvas label
+    var c = document.createElement('canvas');
+    c.width = 256; c.height = 48;
+    var lctx = c.getContext('2d');
+    lctx.font = 'bold 22px -apple-system, sans-serif';
+    lctx.textAlign = 'center'; lctx.textBaseline = 'middle';
+    lctx.strokeStyle = '#000'; lctx.lineWidth = 4;
+    lctx.strokeText(name, 128, 24);
+    lctx.fillStyle = color;
+    lctx.fillText(name, 128, 24);
+    var tex = new THREE.CanvasTexture(c);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
+    sp.scale.set(1.0, 0.19, 1);
+    sp.position.set(0, 0.2, 0);
+    g.add(sp);
+    return g;
+  }
+
+  (function addFutureMissions() {
+    var missions = [
+      { name: 'Europa Clipper', color: '#80c0ff', pos: [-22, 4, 14], arrive: '2030' },
+      { name: 'JUICE',          color: '#ffc080', pos: [18, -3, -12], arrive: '2031' },
+    ];
+    missions.forEach(function(m) {
+      var craft = makeCruiseSpacecraft(m.name, m.color);
+      craft.position.set(m.pos[0], m.pos[1], m.pos[2]);
+      futureMissionsGroup.add(craft);
+      // Trajectory hint line from Jupiter to the spacecraft
+      var hex = parseInt(m.color.slice(1), 16);
+      var line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(m.pos[0], m.pos[1], m.pos[2]),
+        ]),
+        new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.3 })
+      );
+      futureMissionsGroup.add(line);
+    });
+  })();
+
   // ═══ LAYER TOGGLE SYSTEM ═══
   var LAYERS = [
     { id: 'surface', name: 'Cloud Bands',        desc: '8K Cassini/Voyager ISS composite',               visible: true },
@@ -439,6 +513,7 @@
     { id: 'moons',   name: 'Galilean Moons',     desc: 'Io, Europa, Ganymede, Callisto (real Kepler)',   visible: true },
     { id: 'orbits',  name: 'Moon Orbit Lines',   desc: 'Circular orbit approximations',                  visible: true },
     { id: 'juno',    name: 'Juno Spacecraft',    desc: '53-day elliptical polar orbit (approx)',         visible: true },
+    { id: 'future',  name: 'Future missions',    desc: 'Europa Clipper (2030) and JUICE (2031) cruise',  visible: true },
   ];
 
   function setLayerVisible(id, on) {
@@ -454,6 +529,7 @@
         junoMesh.visible = on;
         junoOrbitLine.visible = on;
         break;
+      case 'future':  futureMissionsGroup.visible = on; break;
     }
     renderLayerList();
   }
