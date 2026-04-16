@@ -612,7 +612,7 @@
       m.mesh.position.set(r * Math.cos(nu), 0, r * Math.sin(nu));
     });
 
-    // Juno orbit — 53.5 day period, scaled up 5000x for visibility
+    // Juno orbit  -  53.5 day period, scaled up 5000x for visibility
     var junoM = ((Math.PI * 2) / JUNO.period) * simTime * 5 % (Math.PI * 2);
     var junoE = solveKepler(junoM, JUNO.e);
     var junoNu = 2 * Math.atan2(Math.sqrt(1 + JUNO.e) * Math.sin(junoE/2), Math.sqrt(1 - JUNO.e) * Math.cos(junoE/2));
