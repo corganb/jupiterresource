@@ -257,7 +257,7 @@
   scene.add(tiltGroup);
   planet.userData = { _analysis: {
     name: 'Jupiter', type: 'Gas giant planet',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Jupiter_New_Horizons.jpg/220px-Jupiter_New_Horizons.jpg',
+    image: 'https://terraresource.net/assets/planet-textures/2k_jupiter.jpg',
     desc: 'Largest planet in the Solar System. Mass 2.5x all other planets combined. Composed primarily of hydrogen and helium. Rapid 9h 56m rotation drives powerful jet streams and the Great Red Spot.',
     fields: [
       {label:'Radius',value:'69,911 km'},{label:'Mass',value:'1.898 x 10\u00B2\u2077 kg'},
@@ -308,14 +308,14 @@
   }
   // Analysis data for each moon (shown when clicked)
   var MOON_DATA = {
-    Metis:    { type: 'Inner moon', desc: 'Innermost known moon of Jupiter, orbiting within the main ring. Discovered 1979 by Voyager 1.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Metis.jpg/220px-Metis.jpg', fields: [{label:'Radius',value:'21.5 km'},{label:'Orbit',value:'127,974 km'},{label:'Period',value:'7h 4m'},{label:'Discovered',value:'1979'}] },
+    Metis:    { type: 'Inner moon', desc: 'Innermost known moon of Jupiter, orbiting within the main ring. Discovered 1979 by Voyager 1.', fields: [{label:'Radius',value:'21.5 km'},{label:'Orbit',value:'127,974 km'},{label:'Period',value:'7h 4m'},{label:'Discovered',value:'1979'}] },
     Adrastea: { type: 'Inner moon', desc: 'Second-innermost moon, co-orbits with Metis inside the main ring. One of the smallest moons in the Solar System.', fields: [{label:'Radius',value:'8.2 km'},{label:'Orbit',value:'128,980 km'},{label:'Period',value:'7h 9m'},{label:'Discovered',value:'1979'}] },
-    Amalthea: { type: 'Inner moon', desc: 'Largest inner moon of Jupiter. Irregularly shaped, deep red color from sulfur ejected by Io. Discovered by Barnard in 1892.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/el/Amalthea_%28moon%29.png/220px-Amalthea_%28moon%29.png', fields: [{label:'Dimensions',value:'250 x 146 x 128 km'},{label:'Orbit',value:'181,366 km'},{label:'Period',value:'11h 57m'},{label:'Discovered',value:'1892'}] },
+    Amalthea: { type: 'Inner moon', desc: 'Largest inner moon of Jupiter. Irregularly shaped, deep red color from sulfur ejected by Io. Discovered by Barnard in 1892.', fields: [{label:'Dimensions',value:'250 x 146 x 128 km'},{label:'Orbit',value:'181,366 km'},{label:'Period',value:'11h 57m'},{label:'Discovered',value:'1892'}] },
     Thebe:    { type: 'Inner moon', desc: 'Fourth inner moon. Heavily cratered and irregularly shaped.', fields: [{label:'Dimensions',value:'116 x 98 x 84 km'},{label:'Orbit',value:'221,889 km'},{label:'Period',value:'16h 12m'},{label:'Discovered',value:'1979'}] },
-    Io:       { type: 'Galilean moon', desc: 'Most volcanically active body in the Solar System. Over 400 active volcanoes driven by tidal heating from Jupiter. Surface covered in sulfur and sulfur dioxide frost.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Io_highest_resolution_true_color.jpg/220px-Io_highest_resolution_true_color.jpg', fields: [{label:'Radius',value:'1,821.6 km'},{label:'Orbit',value:'421,800 km'},{label:'Period',value:'1.77 days'},{label:'Mass',value:'8.93 x 10\u00B2\u00B2 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
-    Europa:   { type: 'Galilean moon', desc: 'Ice-covered ocean world. Subsurface ocean may contain more water than Earth. Prime target for astrobiology. Europa Clipper mission arriving 2030.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Europa-moon-with-margins.jpg/220px-Europa-moon-with-margins.jpg', fields: [{label:'Radius',value:'1,560.8 km'},{label:'Orbit',value:'671,100 km'},{label:'Period',value:'3.55 days'},{label:'Ocean depth',value:'~60-150 km'},{label:'Discovered',value:'1610 (Galileo)'}] },
-    Ganymede: { type: 'Galilean moon', desc: 'Largest moon in the Solar System, bigger than Mercury. Only moon with its own magnetic field. ESA JUICE mission arriving 2031.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ganymede_-_Perijove_34_Composite.png/220px-Ganymede_-_Perijove_34_Composite.png', fields: [{label:'Radius',value:'2,634.1 km'},{label:'Orbit',value:'1,070,400 km'},{label:'Period',value:'7.15 days'},{label:'Mass',value:'1.48 x 10\u00B2\u00B3 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
-    Callisto: { type: 'Galilean moon', desc: 'Most heavily cratered body in the Solar System. Ancient surface dates to 4 billion years. Possible subsurface ocean.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Callisto.jpg/220px-Callisto.jpg', fields: [{label:'Radius',value:'2,410.3 km'},{label:'Orbit',value:'1,882,700 km'},{label:'Period',value:'16.69 days'},{label:'Mass',value:'1.08 x 10\u00B2\u00B3 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
+    Io:       { type: 'Galilean moon', desc: 'Most volcanically active body in the Solar System. Over 400 active volcanoes driven by tidal heating from Jupiter. Surface covered in sulfur and sulfur dioxide frost.', fields: [{label:'Radius',value:'1,821.6 km'},{label:'Orbit',value:'421,800 km'},{label:'Period',value:'1.77 days'},{label:'Mass',value:'8.93 x 10\u00B2\u00B2 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
+    Europa:   { type: 'Galilean moon', desc: 'Ice-covered ocean world. Subsurface ocean may contain more water than Earth. Prime target for astrobiology. Europa Clipper mission arriving 2030.', fields: [{label:'Radius',value:'1,560.8 km'},{label:'Orbit',value:'671,100 km'},{label:'Period',value:'3.55 days'},{label:'Ocean depth',value:'~60-150 km'},{label:'Discovered',value:'1610 (Galileo)'}] },
+    Ganymede: { type: 'Galilean moon', desc: 'Largest moon in the Solar System, bigger than Mercury. Only moon with its own magnetic field. ESA JUICE mission arriving 2031.', fields: [{label:'Radius',value:'2,634.1 km'},{label:'Orbit',value:'1,070,400 km'},{label:'Period',value:'7.15 days'},{label:'Mass',value:'1.48 x 10\u00B2\u00B3 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
+    Callisto: { type: 'Galilean moon', desc: 'Most heavily cratered body in the Solar System. Ancient surface dates to 4 billion years. Possible subsurface ocean.', fields: [{label:'Radius',value:'2,410.3 km'},{label:'Orbit',value:'1,882,700 km'},{label:'Period',value:'16.69 days'},{label:'Mass',value:'1.08 x 10\u00B2\u00B3 kg'},{label:'Discovered',value:'1610 (Galileo)'}] },
     Himalia:  { type: 'Irregular moon', desc: 'Largest irregular moon of Jupiter. Likely a captured asteroid. Leads the Himalia group of prograde irregular satellites.', fields: [{label:'Radius',value:'~85 km'},{label:'Orbit',value:'11,460,000 km'},{label:'Period',value:'250.6 days'},{label:'Eccentricity',value:'0.162'},{label:'Discovered',value:'1904'}] },
   };
 
@@ -414,7 +414,6 @@
   var junoMesh = makeJunoModel();
   junoMesh.userData = { _analysis: {
     name: 'Juno', type: 'Active spacecraft (NASA)',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Juno_spacecraft_model_1.png/220px-Juno_spacecraft_model_1.png',
     desc: 'NASA mission to study Jupiter\'s composition, gravity field, magnetic field, and polar magnetosphere. Entered Jupiter orbit 2016-07-04. Extended mission ongoing.',
     fields: [
       {label:'Launch',value:'2011-08-05'},{label:'Orbit insertion',value:'2016-07-04'},
@@ -478,7 +477,6 @@
     );
     grsMesh.userData = { _analysis: {
       name: 'Great Red Spot', type: 'Anticyclonic storm',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Jupiter_Great_Red_Spot_PJ18.png/220px-Jupiter_Great_Red_Spot_PJ18.png',
       desc: 'A persistent anticyclonic storm south of Jupiter\'s equator, observed since at least 1831 and possibly since 1665. Currently about 16,350 km wide (larger than Earth). Wind speeds up to 432 km/h at the edge.',
       fields: [{label:'Latitude',value:'22 deg S'},{label:'Width',value:'~16,350 km'},{label:'Wind speed',value:'432 km/h'},{label:'Observed since',value:'~1665'},{label:'Color cause',value:'Unknown (UV photolysis?)'}],
     }};
@@ -540,7 +538,6 @@
   var FUTURE_ANALYSIS = {
     'Europa Clipper': {
       name: 'Europa Clipper', type: 'Future mission (NASA)',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Europa_Clipper_spacecraft_model.png/220px-Europa_Clipper_spacecraft_model.png',
       desc: 'NASA mission to conduct detailed reconnaissance of Europa and investigate whether it could harbor conditions suitable for life. Will perform ~50 close flybys of Europa from Jupiter orbit.',
       fields: [{label:'Launch',value:'2024-10-14'},{label:'Arrival',value:'2030'},{label:'Target',value:'Europa'},{label:'Flybys',value:'~50 planned'},{label:'Instruments',value:'9 (radar, cameras, spectrometers)'}],
       link: { url: 'https://europa.nasa.gov', text: 'NASA Europa Clipper' },
