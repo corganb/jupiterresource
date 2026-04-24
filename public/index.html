@@ -327,7 +327,7 @@
     Himalia:  { type: 'Irregular moon', desc: 'Largest irregular moon of Jupiter. Likely a captured asteroid. Leads the Himalia group of prograde irregular satellites.', fields: [{label:'Radius',value:'~85 km'},{label:'Orbit',value:'11,460,000 km'},{label:'Period',value:'250.6 days'},{label:'Eccentricity',value:'0.162'},{label:'Discovered',value:'1904'}] },
   };
 
-  GALILEAN.forEach(function(m) {
+  GALILEAN.forEach(function(m, idx) {
     m.a = m.a_km / SCENE_UNIT_KM;
     m.period = m.period_days * 86400;
     var geo = new THREE.SphereGeometry(m.radius, 24, 16);
@@ -355,7 +355,10 @@
     var orbitLine = new THREE.Line(orbitGeo, orbitMat);
     moonOrbitLines.push(orbitLine);
     tiltGroup.add(orbitLine);
-    m.phase = 0;
+    m.phase = (idx / GALILEAN.length) * Math.PI * 2;
+    // Pre-position so the first render frame doesn't show moons stacked at theta=0
+    // (Horizons fetch below overrides with real positions when it resolves).
+    mesh.position.set(m.a * Math.cos(m.phase), 0, m.a * Math.sin(m.phase));
   });
 
   // ═══ REAL MOON POSITIONS (JPL Horizons via Supabase edge fn) ═══
