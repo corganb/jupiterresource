@@ -286,15 +286,15 @@
   // (Metis, Adrastea, Amalthea, Thebe) orbiting INSIDE Io, and Himalia
   // (largest irregular outer moon at ~11.46 million km).
   var GALILEAN = [
-    { name: 'Metis',    a_km: 127974,   e: 0.0012, period_days:  0.295, color: 0x807060, radius: 0.018 },
-    { name: 'Adrastea', a_km: 128980,   e: 0.0018, period_days:  0.298, color: 0x807060, radius: 0.015 },
-    { name: 'Amalthea', a_km: 181366,   e: 0.0031, period_days:  0.498, color: 0xa85530, radius: 0.025 },
-    { name: 'Thebe',    a_km: 221889,   e: 0.0177, period_days:  0.675, color: 0x907868, radius: 0.020 },
-    { name: 'Io',       a_km: 421800,   e: 0.0041, period_days:  1.769, color: 0xffeebb, radius: 0.08 },
-    { name: 'Europa',   a_km: 671100,   e: 0.0094, period_days:  3.551, color: 0xd8c8a0, radius: 0.07 },
-    { name: 'Ganymede', a_km: 1070400,  e: 0.0013, period_days:  7.154, color: 0xa8a090, radius: 0.09 },
-    { name: 'Callisto', a_km: 1882700,  e: 0.0074, period_days: 16.689, color: 0x888078, radius: 0.08 },
-    { name: 'Himalia',  a_km: 11460000, e: 0.1623, period_days:250.566, color: 0x605850, radius: 0.035 },
+    { name: 'Metis',    slug: 'metis',    a_km: 127974,   e: 0.0012, period_days:  0.295, color: 0x807060, radius: 0.018 },
+    { name: 'Adrastea', slug: 'adrastea', a_km: 128980,   e: 0.0018, period_days:  0.298, color: 0x807060, radius: 0.015 },
+    { name: 'Amalthea', slug: 'amalthea', a_km: 181366,   e: 0.0031, period_days:  0.498, color: 0xa85530, radius: 0.025 },
+    { name: 'Thebe',    slug: 'thebe',    a_km: 221889,   e: 0.0177, period_days:  0.675, color: 0x907868, radius: 0.020 },
+    { name: 'Io',       slug: 'io',       a_km: 421800,   e: 0.0041, period_days:  1.769, color: 0xffeebb, radius: 0.08 },
+    { name: 'Europa',   slug: 'europa',   a_km: 671100,   e: 0.0094, period_days:  3.551, color: 0xd8c8a0, radius: 0.07 },
+    { name: 'Ganymede', slug: 'ganymede', a_km: 1070400,  e: 0.0013, period_days:  7.154, color: 0xa8a090, radius: 0.09 },
+    { name: 'Callisto', slug: 'callisto', a_km: 1882700,  e: 0.0074, period_days: 16.689, color: 0x888078, radius: 0.08 },
+    { name: 'Himalia',  slug: 'himalia',  a_km: 11460000, e: 0.1623, period_days:250.566, color: 0x605850, radius: 0.035 },
   ];
   var moonMeshes = [];
   var moonOrbitLines = [];
@@ -355,7 +355,51 @@
     var orbitLine = new THREE.Line(orbitGeo, orbitMat);
     moonOrbitLines.push(orbitLine);
     tiltGroup.add(orbitLine);
+    m.phase = 0;
   });
+
+  // ═══ REAL MOON POSITIONS (JPL Horizons via Supabase edge fn) ═══
+  // Anchors each Galilean/inner/irregular moon to its true Jupiter-centered
+  // position at page load. Horizons returns ecliptic J2000 km; we map to
+  // scene world (Y up), apply inverse Jupiter axial tilt to land in
+  // tiltGroup local frame, then compute an effective m.phase so the Kepler
+  // updater propagates correctly forward from the real t=0 position. If the
+  // fetch fails for any moon, that moon keeps phase=0 (old behavior).
+  (function fetchMoonPositions() {
+    var FN_BASE = 'https://pxocavaczfjcpvqeiznt.supabase.co/functions/v1/horizons-ephemeris';
+    var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4b2NhdmFjemZqY3B2cWVpem50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA3MDcsImV4cCI6MjA5MDExNjcwN30.48A2xW4YoGCESsVurxmW3MP9x_lq2AJ8XeS8nR2RVGI';
+    var ca = Math.cos(JUPITER_TILT_RAD), sa = Math.sin(JUPITER_TILT_RAD);
+    moonMeshes.forEach(function(m) {
+      if (!m.slug) return;
+      fetch(FN_BASE + '?id=' + m.slug + '&center=' + encodeURIComponent('@jupiter'), {
+        headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+      })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function(data) {
+        if (!data || !isFinite(data.x_km)) return;
+        var wx = data.x_km / SCENE_UNIT_KM;
+        var wy = data.z_km / SCENE_UNIT_KM;
+        var wz = -data.y_km / SCENE_UNIT_KM;
+        var lx = wx * ca + wy * sa;
+        var lz = wz;
+        // Orbit-plane angle in local xz (moons are drawn in y=0 of tiltGroup).
+        var theta = Math.atan2(lz, lx);
+        // For small e, nu ~= theta. Convert to mean anomaly via E = f(nu).
+        var E = 2 * Math.atan(Math.sqrt((1 - m.e) / (1 + m.e)) * Math.tan(theta / 2));
+        var M = E - m.e * Math.sin(E);
+        var simAtAnchor = (window.__rs_sim_time || 0);
+        var n = (Math.PI * 2) / m.period;
+        m.phase = M - n * simAtAnchor;
+        m.real_xyz = { x: lx, y: 0, z: lz, epoch_cal: data.epoch_cal };
+        // Snap mesh immediately so first frame shows real position even before next anim tick.
+        var r = m.a * (1 - m.e * Math.cos(E));
+        m.mesh.position.set(r * Math.cos(theta), 0, r * Math.sin(theta));
+      })
+      .catch(function(err) {
+        if (window.console) console.warn('[horizons] ' + m.name + ': ' + err.message);
+      });
+    });
+  })();
 
   // Kepler solver
   function solveKepler(M, e) {
@@ -691,7 +735,7 @@
     var simTime = __rs_sim_time;
     moonMeshes.forEach(function(m) {
       var n = (Math.PI * 2) / m.period;
-      var M = (n * simTime) % (Math.PI * 2);
+      var M = ((m.phase || 0) + n * simTime) % (Math.PI * 2);
       var E = solveKepler(M, m.e);
       var nu = 2 * Math.atan2(Math.sqrt(1 + m.e) * Math.sin(E/2), Math.sqrt(1 - m.e) * Math.cos(E/2));
       var r = m.a * (1 - m.e * Math.cos(E));
