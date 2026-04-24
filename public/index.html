@@ -383,7 +383,9 @@
   // within OrbitControls max zoom (500). Users zoom out to see the full
   // orbit. Periapsis is just above Jupiter's surface at ~1.6 units.
   var JUPITER_SCENE_UNIT_KM = 71492 / 1.5;
+  var JUPITER_TILT_RAD = 0.054629; // 3.13 deg, same as tiltGroup.rotation.z
   var JUNO = {
+    slug: 'juno',
     a: 4055000 / JUPITER_SCENE_UNIT_KM,  // ~85.1 scene units
     e: 0.9471,
     i: 104.9 * Math.PI / 180,
@@ -467,6 +469,39 @@
     var mat = new THREE.LineBasicMaterial({ color: 0x7db3ff, transparent: true, opacity: 0.4 });
     junoOrbitLine = new THREE.Line(geo, mat);
     tiltGroup.add(junoOrbitLine);
+  })();
+
+  // ═══ REAL JUNO POSITION (JPL Horizons via Supabase edge fn) ═══
+  // Fetches Juno's current Jupiter-centered ecliptic state vector and pins
+  // the mesh at the real position. Mesh is a child of tiltGroup (Jupiter's
+  // 3.13 deg axial tilt applied), so we apply the inverse tilt to bring the
+  // ecliptic-frame position into tiltGroup's local frame. The Kepler orbit
+  // polyline remains an approximation; a small visual mismatch between the
+  // real Juno position and the drawn orbit line is expected and acceptable.
+  (function fetchJunoPosition() {
+    var FN_BASE = 'https://pxocavaczfjcpvqeiznt.supabase.co/functions/v1/horizons-ephemeris';
+    var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4b2NhdmFjemZqY3B2cWVpem50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDA3MDcsImV4cCI6MjA5MDExNjcwN30.48A2xW4YoGCESsVurxmW3MP9x_lq2AJ8XeS8nR2RVGI';
+    fetch(FN_BASE + '?id=juno&center=' + encodeURIComponent('@jupiter'), {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+    })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+    .then(function(data) {
+      if (!data || !isFinite(data.x_km)) return;
+      // Ecliptic (X, Y, Z with +Z north) -> scene world (Y up, right-handed)
+      var wx = data.x_km / JUPITER_SCENE_UNIT_KM;
+      var wy = data.z_km / JUPITER_SCENE_UNIT_KM;
+      var wz = -data.y_km / JUPITER_SCENE_UNIT_KM;
+      // Inverse of tiltGroup rotation (Z by +alpha) -> local
+      var ca = Math.cos(JUPITER_TILT_RAD), sa = Math.sin(JUPITER_TILT_RAD);
+      var lx = wx * ca + wy * sa;
+      var ly = -wx * sa + wy * ca;
+      var lz = wz;
+      JUNO.real_xyz = { x: lx, y: ly, z: lz, epoch_cal: data.epoch_cal };
+      junoMesh.position.set(lx, ly, lz);
+    })
+    .catch(function(err) {
+      if (window.console) console.warn('[horizons] Juno: ' + err.message);
+    });
   })();
 
   // ═══ GREAT RED SPOT MARKER ═══
@@ -663,16 +698,19 @@
       m.mesh.position.set(r * Math.cos(nu), 0, r * Math.sin(nu));
     });
 
-    // Juno orbit  -  53.5 day period, scaled up 5000x for visibility
-    var junoM = ((Math.PI * 2) / JUNO.period) * simTime * 5 % (Math.PI * 2);
-    var junoE = solveKepler(junoM, JUNO.e);
-    var junoNu = 2 * Math.atan2(Math.sqrt(1 + JUNO.e) * Math.sin(junoE/2), Math.sqrt(1 - JUNO.e) * Math.cos(junoE/2));
-    var junoR = JUNO.a * (1 - JUNO.e * Math.cos(junoE));
-    var jx = junoR * Math.cos(junoNu);
-    var jz = junoR * Math.sin(junoNu);
-    var jy = jz * Math.sin(JUNO.i);
-    jz = jz * Math.cos(JUNO.i);
-    junoMesh.position.set(jx, jy, jz);
+    // Juno orbit - real position from JPL Horizons pins the mesh (see
+    // fetchJunoPosition above); skip Kepler sim when real_xyz is set.
+    if (!JUNO.real_xyz) {
+      var junoM = ((Math.PI * 2) / JUNO.period) * simTime * 5 % (Math.PI * 2);
+      var junoE = solveKepler(junoM, JUNO.e);
+      var junoNu = 2 * Math.atan2(Math.sqrt(1 + JUNO.e) * Math.sin(junoE/2), Math.sqrt(1 - JUNO.e) * Math.cos(junoE/2));
+      var junoR = JUNO.a * (1 - JUNO.e * Math.cos(junoE));
+      var jx = junoR * Math.cos(junoNu);
+      var jz = junoR * Math.sin(junoNu);
+      var jy = jz * Math.sin(JUNO.i);
+      jz = jz * Math.cos(JUNO.i);
+      junoMesh.position.set(jx, jy, jz);
+    }
   }
 
 
