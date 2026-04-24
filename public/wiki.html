@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiki | JupiterResource | Resource Systems by Corgan Studio, Inc.</title>
+<meta name="description" content="Reference wiki for Jupiter: physical parameters, structure, active missions, and scientific data sources.">
+<link rel="canonical" href="https://jupiterresource.net/wiki">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0c10; color: rgba(245,248,255,0.95); font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1.7; }
+  .container { max-width: 820px; margin: 0 auto; padding: 60px 24px; }
+  .back { display: inline-block; color: #c89668; text-decoration: none; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 40px; opacity: 0.7; }
+  .back:hover { opacity: 1; }
+  h1 { font-size: 30px; font-weight: 600; margin-bottom: 8px; color: #c89668; }
+  .subtitle { font-size: 12px; color: rgba(160,172,200,0.65); margin-bottom: 48px; letter-spacing: 0.04em; }
+  h2 { font-size: 16px; font-weight: 600; color: #c89668; margin: 40px 0 12px; letter-spacing: 0.04em; }
+  p { font-size: 13px; color: rgba(160,172,200,0.85); margin-bottom: 12px; }
+  .table { display: grid; grid-template-columns: 180px 1fr; gap: 10px 24px; font-size: 12.5px; margin: 16px 0; }
+  .table .k { color: rgba(200,210,230,0.7); }
+  .table .v { color: rgba(160,172,200,0.85); }
+  .mission { border-left: 2px solid rgba(200,150,104,0.3); padding-left: 14px; margin-bottom: 20px; }
+  .mission-name { font-size: 14px; font-weight: 600; color: rgba(200,210,230,0.95); margin-bottom: 4px; }
+  .mission-meta { font-size: 11px; color: rgba(130,145,175,0.7); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .mission-desc { font-size: 12.5px; color: rgba(160,172,200,0.8); }
+  .feature { margin-bottom: 14px; }
+  .feature-name { font-size: 13px; font-weight: 600; color: #c89668; margin-bottom: 2px; }
+  .feature-desc { font-size: 12.5px; color: rgba(160,172,200,0.8); }
+  a { color: #c89668; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .sources { font-size: 11px; color: rgba(130,145,175,0.6); margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer { margin-top: 48px; font-size: 11px; color: rgba(130,145,175,0.50); display: flex; gap: 16px; flex-wrap: wrap; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer a { color: rgba(160,172,200,0.65); }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back">&larr; Back to JupiterResource</a>
+  <h1>Jupiter Reference Wiki</h1>
+  <div class="subtitle">Physical parameters, structure, active missions, and scientific data sources</div>
+
+  <h2>Overview</h2>
+  <p>Jupiter is the fifth planet and largest in the Solar System, a gas giant more than twice the mass of all other planets combined. It has 95+ known moons including the four Galilean satellites (Io, Europa, Ganymede, Callisto), a faint ring system, and the iconic Great Red Spot - a persistent storm larger than Earth.</p>
+
+  <h2>Physical parameters</h2>
+  <div class="table">
+    <div class="k">Type</div><div class="v">Gas giant</div>
+    <div class="k">Radius</div><div class="v">69,911 km (equatorial; 10.97x Earth)</div>
+    <div class="k">Mass</div><div class="v">1.898 x 10^27 kg (318 Earth)</div>
+    <div class="k">Surface gravity</div><div class="v">24.79 m/s^2</div>
+    <div class="k">Semi-major axis</div><div class="v">5.203 AU (778.5 million km)</div>
+    <div class="k">Orbital period</div><div class="v">11.86 years</div>
+    <div class="k">Rotation period</div><div class="v">9.93 hours (fastest of any planet)</div>
+    <div class="k">Axial tilt</div><div class="v">3.13 degrees</div>
+    <div class="k">Atmosphere</div><div class="v">~90% hydrogen, ~10% helium, trace methane, ammonia</div>
+    <div class="k">Magnetic field</div><div class="v">~14x Earth; magnetosphere extends beyond Saturn's orbit</div>
+    <div class="k">Moons</div><div class="v">95+ confirmed</div>
+  </div>
+
+  <h2>Active missions</h2>
+  <div class="mission">
+    <div class="mission-name">Pioneer 10 / 11 (NASA)</div>
+    <div class="mission-meta">Flybys 1973/1974</div>
+    <div class="mission-desc">First spacecraft to visit Jupiter. Characterized magnetosphere and radiation belts.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Voyager 1 / 2 (NASA)</div>
+    <div class="mission-meta">Flybys 1979</div>
+    <div class="mission-desc">Discovered Jupiter's rings, detailed imagery of Galilean moons, captured Io volcanism.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Galileo (NASA)</div>
+    <div class="mission-meta">Orbit 1995-2003</div>
+    <div class="mission-desc">First Jupiter orbiter. Deployed an atmospheric probe. Studied moons in detail.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Cassini (NASA/ESA)</div>
+    <div class="mission-meta">Flyby 2000</div>
+    <div class="mission-desc">En route to Saturn. Joint observations with Galileo.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Juno (NASA)</div>
+    <div class="mission-meta">Orbit since 2016</div>
+    <div class="mission-desc">Polar-orbiting spacecraft studying interior, magnetic field, and auroras. Captures JunoCam imagery.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">Europa Clipper (NASA)</div>
+    <div class="mission-meta">En route, arrival 2030</div>
+    <div class="mission-desc">Launched 2024. Will perform ~50 flybys of Europa to assess habitability of its subsurface ocean.</div>
+  </div>
+  <div class="mission">
+    <div class="mission-name">JUICE (ESA)</div>
+    <div class="mission-meta">En route, arrival 2031</div>
+    <div class="mission-desc">Jupiter Icy Moons Explorer. Will orbit Ganymede after Jupiter tour. First mission to orbit another planet's moon.</div>
+  </div>
+
+  <h2>Notable features</h2>
+  <div class="feature">
+    <div class="feature-name">Great Red Spot</div>
+    <div class="feature-desc">Persistent anticyclonic storm, has been observed for ~400 years. Shrinking in recent decades.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Galilean moons</div>
+    <div class="feature-desc">Io (volcanic), Europa (ice-covered ocean world), Ganymede (largest moon in Solar System), Callisto (most heavily cratered).</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Ring system</div>
+    <div class="feature-desc">Faint, discovered 1979 by Voyager 1. Composed of dust from moon impacts.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-name">Radiation belts</div>
+    <div class="feature-desc">Intense radiation environment. Damages spacecraft electronics; missions use shielded vaults.</div>
+  </div>
+
+  <h2>Further reading</h2>
+  <p><a href="https://science.nasa.gov/jupiter/" target="_blank">NASA Jupiter</a></p>
+  <p><a href="https://en.wikipedia.org/wiki/Jupiter" target="_blank">Wikipedia: Jupiter</a></p>
+  <p><a href="https://www.nasa.gov/mission/juno/" target="_blank">Juno mission</a></p>
+  <p><a href="https://europa.nasa.gov/" target="_blank">Europa Clipper</a></p>
+  <p><a href="https://www.esa.int/Science_Exploration/Space_Science/Juice" target="_blank">JUICE mission</a></p>
+
+  <div class="sources">
+    Physical parameters sourced from NASA fact sheets and IAU nominal values. Mission summaries compiled from operator pages (NASA, ESA, JAXA, CNSA). All values are current as of the page publish date and may be refreshed periodically.
+  </div>
+
+  <div class="footer">
+    <a href="/">Home</a>
+    <a href="/faq">FAQ</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <span style="margin-left:auto">&copy; 2025-2026 Corgan Studio, Inc.</span>
+  </div>
+</div>
+</body>
+</html>
